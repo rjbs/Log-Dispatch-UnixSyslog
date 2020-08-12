@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 package Log::Dispatch::UnixSyslog;
+
 use parent qw(Log::Dispatch::Output);
 # ABSTRACT: log events to syslog with Unix::Syslog
 
