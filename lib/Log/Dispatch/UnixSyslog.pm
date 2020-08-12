@@ -84,6 +84,11 @@ sub new {
   # this is our duty as a well-behaved Log::Dispatch plugin
   $self->_basic_init(%arg);
 
+  # hand wringing: What if someone is re-openlog-ing after this?  Well, they
+  # ought not to do that!  We could re-open every time, but let's just see how
+  # this goes, for now. -- rjbs, 2020-08-11
+  Unix::Syslog::openlog($self->{ident}, 0, $self->{facility});
+
   return $self;
 }
 
