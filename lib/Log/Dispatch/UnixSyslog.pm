@@ -1,4 +1,4 @@
-use strict;
+use v5.20.0;
 use warnings;
 package Log::Dispatch::UnixSyslog;
 
@@ -45,6 +45,7 @@ this takes the following arguments:
 
   ident     - a string to prepend to all messages in the system log; required
   facility  - which syslog facility to log to (as a string); required
+  logopt    - the numeric value of the openlog options parameter; (default: 0)
 
 =cut
 
@@ -75,7 +76,6 @@ sub new {
     unless my $const = Unix::Syslog->can($const_name);
 
   my $self = {
-    ident     => $arg{ident},
     facility  => scalar $const->(),
   };
 
@@ -87,7 +87,7 @@ sub new {
   # hand wringing: What if someone is re-openlog-ing after this?  Well, they
   # ought not to do that!  We could re-open every time, but let's just see how
   # this goes, for now. -- rjbs, 2020-08-11
-  Unix::Syslog::openlog($self->{ident}, 0, $self->{facility});
+  Unix::Syslog::openlog($arg{ident}, $arg{logopt} // 0, $self->{facility});
 
   return $self;
 }
