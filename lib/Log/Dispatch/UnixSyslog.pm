@@ -76,6 +76,7 @@ sub new {
     unless my $const = Unix::Syslog->can($const_name);
 
   my $self = {
+    ident     => $arg{ident},
     facility  => scalar $const->(),
   };
 
@@ -87,7 +88,7 @@ sub new {
   # hand wringing: What if someone is re-openlog-ing after this?  Well, they
   # ought not to do that!  We could re-open every time, but let's just see how
   # this goes, for now. -- rjbs, 2020-08-11
-  Unix::Syslog::openlog($arg{ident}, $arg{logopt} // 0, $self->{facility});
+  Unix::Syslog::openlog($self->{ident}, $arg{logopt} // 0, $self->{facility});
 
   return $self;
 }
