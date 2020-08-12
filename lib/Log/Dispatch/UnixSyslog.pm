@@ -72,11 +72,11 @@ sub new {
   my $const_name = "LOG_\U$arg{facility}";
 
   Carp::croak('provided facility value is valid but unknown?!')
-    unless Unix::Syslog->can($const_name);
+    unless my $const = Unix::Syslog->can($const_name);
 
   my $self = {
     ident     => $arg{ident},
-    facility  => scalar Unix::Syslog->$const_name,
+    facility  => scalar $const->(),
   };
 
   bless $self => $class;
