@@ -69,7 +69,7 @@ sub new {
   Carp::croak('provided facility value is not a valid syslog facility')
     unless $IS_FACILITY{ $arg{facility} };
 
-  my $const_name = "LOG_\U$arg{facillity}";
+  my $const_name = "LOG_\U$arg{facility}";
 
   Carp::croak('provided facility value is valid but unknown?!')
     unless Unix::Syslog->can($const_name);
