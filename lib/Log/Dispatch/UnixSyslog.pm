@@ -78,6 +78,7 @@ sub new {
   my $self = {
     ident     => $arg{ident},
     facility  => scalar $const->(),
+    logopt    => $arg{logopt} // 0,
   };
 
   bless $self => $class;
@@ -85,12 +86,23 @@ sub new {
   # this is our duty as a well-behaved Log::Dispatch plugin
   $self->_basic_init(%arg);
 
+  $self->_maybe_openlog;
+
+  return $self;
+}
+
+sub _maybe_openlog {
+  my ($self) = @_;
+
+  return if $self->{_opened_in_pid} && $self->{_opened_in_pid} == $$;
+
   # hand wringing: What if someone is re-openlog-ing after this?  Well, they
   # ought not to do that!  We could re-open every time, but let's just see how
   # this goes, for now. -- rjbs, 2020-08-11
-  Unix::Syslog::openlog($self->{ident}, $arg{logopt} // 0, $self->{facility});
+  Unix::Syslog::openlog($self->{ident}, $self->{logopt}, $self->{facility});
+  $self->{_opened_in_pid} = $$;
 
-  return $self;
+  return;
 }
 
 =method log_message
@@ -108,6 +120,7 @@ sub log_message {
   my $sys_level = 7 - $self->_level_as_number($p{level});
   my $priority  = $sys_level | $self->{facility};
 
+  $self->_maybe_openlog;
   Unix::Syslog::syslog($priority, '%s', $p{message});
 
   return;
