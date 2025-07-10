@@ -86,8 +86,6 @@ sub new {
   # this is our duty as a well-behaved Log::Dispatch plugin
   $self->_basic_init(%arg);
 
-  $self->_maybe_openlog;
-
   return $self;
 }
 
